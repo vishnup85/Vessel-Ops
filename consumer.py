@@ -1,11 +1,11 @@
 import json
-
+import os
 from confluent_kafka import Consumer
 
 
 consumer = Consumer({
     "bootstrap.servers": "localhost:9092",
-    "group.id": "vessel-replay-demo",
+    "group.id": os.environ.get("KAFKA_GROUP_ID", "vessel-learning"),
     "auto.offset.reset": "earliest",
     "enable.auto.commit": False,
 })
@@ -32,6 +32,11 @@ try:
             f"partition={message.partition()} "
             f"offset={message.offset()}"
         )
+        if os.environ.get("CRASH_BEFORE_COMMIT") == "1":
+            print("Simulated crash: processed, but not committed")
+            raise RuntimeError("Simulated crash: processed, but not committed")
+
+        consumer.commit(message=message, asynchronous=False)
         
 
 except KeyboardInterrupt:
