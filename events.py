@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-START_TIME = datetime(2026, 10, 4, tzinfo=timezone.utc)
+START_TIME = datetime(2026, 10, 7, tzinfo=timezone.utc)
 
 
 def generate_position(mmsi: str, sequence: int) -> dict:
@@ -8,7 +8,7 @@ def generate_position(mmsi: str, sequence: int) -> dict:
     event_id = f"{mmsi}:{sequence}"
     timestamp = START_TIME + timedelta(seconds=sequence)
     latitude = 1.25
-    longitude = 103.80 + sequence * 0.00001
+    longitude = round(103.80 + sequence * 0.00001, 5)
     speed_knots = 2.0
     return {
         "event_id": event_id,

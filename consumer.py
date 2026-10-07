@@ -1,13 +1,14 @@
 import json
 import os
 from confluent_kafka import Consumer
-
+from detector import detect_transition
 
 consumer = Consumer({
     "bootstrap.servers": "localhost:9092",
     "group.id": os.environ.get("KAFKA_GROUP_ID", "vessel-learning"),
     "auto.offset.reset": "earliest",
     "enable.auto.commit": False,
+    "max.poll.interval.ms": 1800000,
 })
 
 consumer.subscribe(["vessel.positions"])
@@ -25,6 +26,14 @@ try:
 
         # TODO: Convert the message's JSON bytes into a Python dictionary.
         event = json.loads(message.value())
+        transition = detect_transition(
+            event["mmsi"],
+            event["latitude"],
+            event["longitude"],
+        )
+
+        if transition is not None:
+            print(f"vessel={event['mmsi']} {transition}")
 
         print(
             f"vessel={event['mmsi']} "

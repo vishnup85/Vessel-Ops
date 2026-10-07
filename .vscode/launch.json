@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug vessel consumer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/consumer.py",
+            "console": "integratedTerminal",
+            "env": {
+                "KAFKA_GROUP_ID": "zone-demo-1",
+                "CRASH_BEFORE_COMMIT": "0"
+            }
+        }
+    ]
+}
