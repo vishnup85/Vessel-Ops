@@ -22,7 +22,7 @@ producer = Producer({
 # TODO: Generate an event for vessel "999000001", sequence 0.
 vessels = ["999000001", "999000002", "999000003"]
 
-for sequence in range(6):
+for sequence in [5]:
     for mmsi in vessels:
         # 1. Generate an event using mmsi and sequence.
         event = generate_position(mmsi, sequence)
