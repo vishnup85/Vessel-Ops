@@ -2,6 +2,7 @@ import json
 import os
 from confluent_kafka import Consumer
 from detector import detect_transition
+from database import get_connection
 
 consumer = Consumer({
     "bootstrap.servers": "localhost:9092",
@@ -26,11 +27,13 @@ try:
 
         # TODO: Convert the message's JSON bytes into a Python dictionary.
         event = json.loads(message.value())
-        transition = detect_transition(
-            event["mmsi"],
-            event["latitude"],
-            event["longitude"],
-        )
+        with get_connection() as connection:
+            transition = detect_transition(
+                connection,
+                event["mmsi"],
+                event["latitude"],
+                event["longitude"],
+            )
 
         if transition is not None:
             print(f"vessel={event['mmsi']} {transition}")

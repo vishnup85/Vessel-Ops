@@ -1,3 +1,5 @@
+from database import get_vessel_state, save_vessel_state
+
 def is_inside_zone(latitude: float, longitude: float) -> bool:
     return (
         1.24 <= latitude <= 1.26
@@ -10,12 +12,10 @@ def is_inside_zone(latitude: float, longitude: float) -> bool:
 # print(is_inside_zone(1.25, 103.80005))  # False: beyond the zone
 # print(is_inside_zone(1.30, 103.80003))  # False: latitude outside
 # Each vessel gets its own remembered state.
-vessel_states = {}
 
-
-def detect_transition(mmsi: str, latitude: float, longitude: float):
+def detect_transition(connection, mmsi: str, latitude: float, longitude: float):
     current_inside = is_inside_zone(latitude, longitude)
-    previous_inside = vessel_states.get(mmsi)  # None if unseen
+    previous_inside = get_vessel_state(connection, mmsi)  # None if unseen
 
     transition = None
 
@@ -29,7 +29,7 @@ def detect_transition(mmsi: str, latitude: float, longitude: float):
             transition = "entered" 
 
     # TODO: Save current_inside in vessel_states under this MMSI.
-    vessel_states[mmsi] = current_inside
+    save_vessel_state(connection, mmsi, current_inside)
     return transition
 
 # print(detect_transition("999000001", 1.25, 103.80001))
